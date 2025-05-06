@@ -38,16 +38,17 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/cf-devops-petclinic:latest
       # azure login    
       - name: Log in to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}  # Azure service principal credentials as a secret
     
       #Deploy to AKS
       - uses: Azure/aks-set-context@v4
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
-          cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+          #creds: '${{ secrets.AZURE_CREDENTIALS }}'
           resource-group: ${{ secrets.RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+          
       
       
       # Step: Get AKS credentials
