@@ -9,10 +9,10 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
-      MYSQL_ROOT_PASSWORD: ${{ secrets.ROOT_PASSWORD }}
-      MYSQL_DB: ${{ secrets.MYSQL_DB }}
-      MYSQL_USER: ${{ secrets.MYSQL_USER }}
-      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORDB }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      #POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         
     steps:
       # Step 1: Checkout the repository
@@ -27,15 +27,15 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub password stored as a secret
 
       # Step 3: Set up Node.js (optional, for build prerequisites)
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20' # Specify Node.js version
+      #- name: Set up Node.js
+      #  uses: actions/setup-node@v3
+      #  with:
+      #    node-version: '20' # Specify Node.js version
 
       # Step 4: Build the Docker image
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/cf-devops-petclinic:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cf-devops-petclinic .
 
       # Step 5: Push the Docker image to Docker Hub
       - name: Push Docker Image
@@ -65,13 +65,12 @@ jobs:
           chmod +x k8s/sct-create-ns.sh
           ./k8s/sct-create-ns.sh
 
-      - name: Create MySQL Secrets
+      - name: Create Postgres Secrets
         run: |
-          kubectl -n app create secret generic mysql-secret \
-          --from-literal=MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
-          --from-literal=MYSQL_DB=$MYSQL_DB \
-          --from-literal=MYSQL_USER=$MYSQL_USER \
-          --from-literal=MYSQL_HOST=$MYSQL_HOST \
+          kubectl -n app create secret generic pg-db-secret \
+          --from-literal=POSTGRES_USER=$POSTGRES_USER \
+          --from-literal=POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+          --from-literal=POSTGRES_DB=$POSTGRES_DB \          
           --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy App and database
