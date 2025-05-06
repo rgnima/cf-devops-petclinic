@@ -6,7 +6,7 @@ on:
       - main  # Trigger the workflow when changes are pushed to the `main` branch.
 
 jobs:
-  build-and-push:
+  build-push-deploy:
     runs-on: ubuntu-latest
     env:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
