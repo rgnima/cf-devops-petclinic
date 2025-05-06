@@ -12,7 +12,7 @@ jobs:
       POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORDB }}
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      #POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
         
     steps:
       # Step 1: Checkout the repository
@@ -27,12 +27,6 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub username stored as a secret
           password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub password stored as a secret
 
-      # Step 3: Set up Node.js (optional, for build prerequisites)
-      #- name: Set up Node.js
-      #  uses: actions/setup-node@v3
-      #  with:
-      #    node-version: '20' # Specify Node.js version
-
       # Step 4: Build the Docker image
       - name: Build Docker Image
         run: |
@@ -43,36 +37,36 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/cf-devops-petclinic:latest
       # azure login    
-      # - name: Log in to Azure
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{ secrets.AZURE_CREDENTIALS }}  # Azure service principal credentials as a secret
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  # Azure service principal credentials as a secret
     
-      # Deploy to AKS
-      # - uses: Azure/aks-set-context@v4
-      #   with:
-      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
-      #     cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
-      #     resource-group: ${{ secrets.RESOURCE_GROUP }}
+      #Deploy to AKS
+      - uses: Azure/aks-set-context@v4
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+          resource-group: ${{ secrets.RESOURCE_GROUP }}
       
       
-      # # Step: Get AKS credentials
-      # - name: Set up kubectl with AKS credentials
-      #   run: |
-      #     az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+      # Step: Get AKS credentials
+      - name: Set up kubectl with AKS credentials
+        run: |
+          az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
       
-      # - name: Create NS for app
-      #   run: |
-      #     chmod +x k8s/sct-create-ns.sh
-      #     ./k8s/sct-create-ns.sh
+      - name: Create NS for app
+        run: |
+          chmod +x k8s/sct-create-ns.sh
+          ./k8s/sct-create-ns.sh
 
-      # - name: Create Postgres Secrets
-      #   run: |
-      #     kubectl -n app create secret generic pg-db-secret \
-      #     --from-literal=POSTGRES_USER=$POSTGRES_USER \
-      #     --from-literal=POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-      #     --from-literal=POSTGRES_DB=$POSTGRES_DB \          
-      #     --dry-run=client -o yaml | kubectl apply -f -
+       - name: Create Postgres Secrets
+         run: |
+           kubectl -n app create secret generic pg-db-secret \
+           --from-literal=POSTGRES_USER=$POSTGRES_USER \
+           --from-literal=POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
+           --from-literal=POSTGRES_DB=$POSTGRES_DB \          
+           --dry-run=client -o yaml | kubectl apply -f -
 
       # - name: Deploy App and database
       #   uses: Azure/k8s-deploy@v5
