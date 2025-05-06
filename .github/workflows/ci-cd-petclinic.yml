@@ -46,15 +46,15 @@ jobs:
       - uses: Azure/aks-set-context@v4
         with:
           #creds: '${{ secrets.AZURE_CREDENTIALS }}'
-          resource-group: ${{ secrets.RESOURCE_GROUP }}
-          cluster-name: ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+          resource-group: ${{ vars.RESOURCE_GROUP }}
+          cluster-name: ${{ vars.AZURE_AKS_CLUSTER_NAME }}
           
       
       
       # Step: Get AKS credentials
       - name: Set up kubectl with AKS credentials
         run: |
-          az aks get-credentials --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.AZURE_AKS_CLUSTER_NAME }}
+          az aks get-credentials --resource-group ${{ vars.RESOURCE_GROUP }} --name ${{ vars.AZURE_AKS_CLUSTER_NAME }}
       
       - name: Create NS for app
         run: |
