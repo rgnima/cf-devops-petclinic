@@ -56,7 +56,12 @@ jobs:
         run: |
           az aks get-credentials --resource-group ${{ vars.RESOURCE_GROUP }} --name ${{ vars.AZURE_AKS_CLUSTER_NAME }}
       
-      - name: Create NS for app
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: '1.30.0'
+            
+      - name: Create namespace for app
         run: |
           chmod +x k8s/sct-create-ns.sh
           ./k8s/sct-create-ns.sh
