@@ -60,8 +60,8 @@ jobs:
           chmod +x k8s/sct-create-ns.sh
           ./k8s/sct-create-ns.sh
 
-       - name: Create Postgres Secrets
-         run: |
+      - name: Create Postgres Secrets
+        run: |
            kubectl -n app create secret generic pg-db-secret \
            --from-literal=POSTGRES_USER=$POSTGRES_USER \
            --from-literal=POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
