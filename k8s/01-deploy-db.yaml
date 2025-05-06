@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-db
+  namespace: app
+  labels:
+    app: pg-db
+spec:
+  selector:
+    matchLabels:
+      app: pg-db
+  template:
+    metadata:
+      labels:
+        app: pg-db
+    spec:
+      containers:
+        - image: postgres:17
+          name: postgresql
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-db-secret
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-db-secret
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: pg-db-secret
+                  key: database
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          livenessProbe:
+            tcpSocket:
+              port: postgresql
+          readinessProbe:
+            tcpSocket:
+              port: postgresql
+          startupProbe:
+            tcpSocket:
+              port: postgresql
