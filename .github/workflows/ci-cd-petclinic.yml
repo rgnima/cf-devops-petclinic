@@ -71,7 +71,7 @@ jobs:
            kubectl -n app create secret generic pg-db-secret \
            --from-literal=POSTGRES_USER=$POSTGRES_USER \
            --from-literal=POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-           --from-literal=POSTGRES_DB=$POSTGRES_DB \          
+           --from-literal=POSTGRES_DB=$POSTGRES_DB \
            --dry-run=client -o yaml | kubectl apply -f -
 
       # - name: Deploy App and database
