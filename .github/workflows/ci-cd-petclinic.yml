@@ -45,7 +45,6 @@ jobs:
       #Deploy to AKS
       - uses: Azure/aks-set-context@v4
         with:
-          #creds: '${{ secrets.AZURE_CREDENTIALS }}'
           resource-group: ${{ vars.RESOURCE_GROUP }}
           cluster-name: ${{ vars.AZURE_AKS_CLUSTER_NAME }}
           
@@ -74,12 +73,12 @@ jobs:
            --from-literal=POSTGRES_DB=$POSTGRES_DB \
            --dry-run=client -o yaml | kubectl apply -f -
 
-       - name: Deploy App and database
-         uses: Azure/k8s-deploy@v5
-         with:
-           action: deploy
-           namespace: app
-           manifests: |
+      - name: Deploy App and database
+        uses: Azure/k8s-deploy@v5
+        with:
+          action: deploy
+          namespace: app
+          manifests: |
              k8s/01-deploy-db.yaml
              k8s/02-service-db.yaml
       #       k8s/03-deploy-app.yaml
